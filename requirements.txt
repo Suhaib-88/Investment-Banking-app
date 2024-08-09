@@ -1,0 +1,9 @@
+langchain
+uvicorn
+python-multipart
+ctransformers
+qdrant-client
+torch
+sentence_transformers
+langchain-community
+pypdf
