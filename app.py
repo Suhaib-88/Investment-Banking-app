@@ -1,12 +1,16 @@
 from flask import Flask, render_template,request, jsonify
 from langchain.prompts import PromptTemplate
 from langchain_community.llms import CTransformers
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.retrieval_qa.base import RetrievalQA
 from langchain.vectorstores import Chroma
 from langchain.embeddings import HuggingFaceBgeEmbeddings
-from langchain.document_loaders import PyPDFDirectoryLoader  
-from langchain.chains.llm import LLMChain
+from langchain.agents.agent_toolkits import (
+    create_vectorstore_agent,
+    VectorStoreToolkit,
+    VectorStoreInfo
+)
+from agent_helper import create_vector_store
+from langchain.embeddings import HuggingFaceBgeEmbeddings
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -36,12 +40,15 @@ embeddings = HuggingFaceBgeEmbeddings(
     encode_kwargs=encode_kwargs
 )
 
+
 prompt = PromptTemplate(template=prompt_template, input_variables=['context', 'question'])
 
 
-load_vector_store = Chroma(persist_directory="stores/pet_cosine", embedding_function=embeddings)
+load_vector_store = Chroma(persist_directory="Vectorstores/documents", embedding_function=embeddings)
 
 retriever = load_vector_store.as_retriever(search_kwargs={"k":1})
+
+
 
 @app.route('/')
 def index():
